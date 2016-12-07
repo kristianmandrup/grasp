@@ -1,4 +1,33 @@
-filter = (name, args, {raw-prepend, raw-prepend, results, text-operations}) ->
+{ lines, unlines, filter, fold, capitalize, camelize, dasherize} = require 'prelude-ls'
+
+do-each = (args, result) ->
+  switch args.0
+  | 'before' =>
+    for result in results
+      result.raw.prepend = "#{args.1}#{ result.raw.prepend ? ''}"
+  | 'after' =>
+    for result in results
+      result.raw.append = "#{ result.raw.append ? ''}#{args.1}"
+  | 'wrap' =>
+    [pre, post] = if args.length is 2 then [args.1, args.1] else [args.1, args.2]
+    for result in results
+      result.raw.prepend = "#{pre}#{ result.raw.prepend ? ''}"
+      result.raw.append = "#{ result.raw.append ? ''}#{post}"
+  | otherwise =>
+    throw new Error "'#{args.0}' is not supported by 'each'"
+
+append = (results, arg) ->
+  results.push type: 'Raw', raw: "#arg"
+
+prepend = (results, arg) ->
+  results.unshift type: 'Raw', raw: "#arg"
+
+wrap = (raw, args) ->
+  [pre, post] = if args.length is 1 then [args.0, args.0] else args
+  raw.prepend := "#pre#raw.prepend"
+  raw.append += "#post"
+
+filter = (name, args, {raw, results, text-operations}) ->
   if not args.length and name in <[ prepend before after prepend append wrap nth nth-last
                                             slice each replace substring substr str-slice ]>
     throw new Error "No arguments supplied for '#filter-name' filter"
@@ -9,33 +38,19 @@ filter = (name, args, {raw-prepend, raw-prepend, results, text-operations}) ->
   | 'join' =>
     join := if args.length then "#{args.0}" else ''
   | 'before' =>
-    raw-prepend := "#{args.0}#raw-prepend"
+    raw.prepend := "#{args.0}#raw.prepend"
   | 'after' =>
-    raw-append += "#{args.0}"
+    raw.append += "#{args.0}"
   | 'wrap' =>
-    [pre, post] = if args.length is 1 then [args.0, args.0] else args
-    raw-prepend := "#pre#raw-prepend"
-    raw-append += "#post"
+    wrap raw, args
   | 'prepend' =>
-    for arg in args then results.unshift type: 'Raw', raw: "#arg"
+    for arg in args then prepend results arg
   | 'append' =>
-    for arg in args then results.push type: 'Raw', raw: "#arg"
+    for arg in args then append results arg
   | 'each' =>
     throw new Error "No arguments supplied for 'each #{args.0}'" if args.length < 2
-    switch args.0
-    | 'before' =>
-      for result in results
-        result.raw-prepend = "#{args.1}#{ result.raw-prepend ? ''}"
-    | 'after' =>
-      for result in results
-        result.raw-append = "#{ result.raw-append ? ''}#{args.1}"
-    | 'wrap' =>
-      [pre, post] = if args.length is 2 then [args.1, args.1] else [args.1, args.2]
-      for result in results
-        result.raw-prepend = "#{pre}#{ result.raw-prepend ? ''}"
-        result.raw-append = "#{ result.raw-append ? ''}#{post}"
-    | otherwise =>
-      throw new Error "'#{args.0}' is not supported by 'each'"
+    do-each args, result
+
   | 'nth' =>
     n = +args.0
     results := results.slice n, (n + 1)
@@ -72,6 +87,8 @@ filter = (name, args, {raw-prepend, raw-prepend, results, text-operations}) ->
     text-operations.push dasherize
   | 'trim' =>
     text-operations.push (.trim!)
+
+  # TODO: avoid dupliacation
   | 'substring' =>
     let args
       text-operations.push (.substring args.0, args.1)
