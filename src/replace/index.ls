@@ -1,42 +1,9 @@
-{ parse-filters, get-args, get-raw, get-orig-results } = require './utils'
-
-replacer = (input, node, query-engine) ->
-  (, replacement-arg, filter-arg) ->
-    filter-arg = filter-arg || replacement-arg
-    [selector, filters] = parse-filters filter-arg
-
-    # TODO: clean up!
-    query-results = get-orig-results node, selector, filter-arg
-    query = query-results query-engine, node
-    orig-results = query replacement-arg
-
-    if orig-results.length
-      # TODO: put in a record (Object)
-      results = orig-results
-      raw =
-        prepend: ''
-        append: ''
-
-      join = null
-      text-operations = []
-
-      while filters.length
-        filter-name = filters.shift!
-        args = get-args filters
-        filter filter-name, args, {raw, results, text-operations}
-
-      raw.results = [get-raw input, result for result in results]
-      output = "#raw.prepend#{ if join? then raw-results.join join else raw.results.0 }#raw.append"
-
-      if text-operations.length
-        fold (|>), output, text-operations
-      else
-        output
-    else
-      ''
-
+{ get-filters, get-args, get-raw } = require './utils'
+{ get-orig-results } = require './orig-results'
 { get-replacement-func } = require './replacement'
+{ replacer } = require './replacer'
 
+# replace replacement, clean-input, sliced-results, query-engine
 replace = (replacement, input, nodes, query-engine) ->
   input-lines = lines input
   col-offset = 0

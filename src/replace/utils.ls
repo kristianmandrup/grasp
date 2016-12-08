@@ -1,11 +1,5 @@
 levn = require 'levn'
 
-make-query = (query-engine, node) ->
-  (selector, backup-selector) ->
-    try
-      query-engine.query selector, node
-    catch
-      query-engine.query backup-selector, node
 
 filter-regex = //
                \s+\|\s+
@@ -22,30 +16,16 @@ has-filter = (txt) ->
   /^\s*\|\s+/.test txt
 
 parse-filters = (filter-str) ->
-  if has-filter filter-arg
-    [, ...filters] = " #{ filter-arg.trim! }".split filter-regex # prepend space so regex works
+  filter-str = filter-str.trim!
+
+  if has-filter? filter-str
+    [, ...filters] = " #{ filter-str }".split filter-regex # prepend space so regex works
   else
-    [selector, ...filters] = filter-arg.trim!.split filter-regex
+    [selector, ...filters] = filter-str.split filter-regex
 
 get-filters =  (filter-arg) ->
   filter-arg if Array.isArray filter-arg
   parse-filters filter-arg
-
-query-results = (node, selector) ->
-  if node._named?[selector]
-    ->
-      [].concat that
-  else
-    (replacement-arg) ->
-      query = make-query query-engine, node
-      query selector, replacement-arg
-
-get-orig-results = (node, selector, filter-arg) ->
-  if has-filter filter-arg then
-    ->
-      [node]
-  else
-    query-results node selector
 
 get-raw = (input, node) ->
   raw = if node.raw
@@ -61,6 +41,6 @@ get-raw = (input, node) ->
 
 module.exports = {
   get-raw
-  get-orig-results
-  parse-filters
+  get-filters
+  get-args
 }
