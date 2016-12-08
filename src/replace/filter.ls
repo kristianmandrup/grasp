@@ -34,6 +34,8 @@ filter = (name, args, {raw, results, text-operations}) ->
   else if name in <[ replace ]> and args.length < 2
     throw new Error "Must supply at least two arguments for '#filter-name' filter"
 
+  join = null
+
   switch name
   | 'join' =>
     join := if args.length then "#{args.0}" else ''
@@ -100,3 +102,5 @@ filter = (name, args, {raw, results, text-operations}) ->
       text-operations.push (.slice args.0, args.1)
   | otherwise =>
     throw new Error "Invalid filter: #filter-name#{ if args-str then " #args-str" else ''}"
+
+  [join, raw, results, text-operations]

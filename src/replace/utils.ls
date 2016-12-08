@@ -13,7 +13,7 @@ filter-regex = //
                ((?:\s+(?:'(?:\\'|[^'])*'|"(?:\\"|[^"])*"|[^\|\s]+))*)
                //
 
-get-args = (filters)
+get-args = (filters) ->
   args-str = filters.shift!.trim!
   args-str += filters.shift! # extra
   levn.parse 'Array', args-str
@@ -40,8 +40,7 @@ query-results = (node, selector) ->
       query = make-query query-engine, node
       query selector, replacement-arg
 
-
-get-orig-results = (node, selector, filter-arg)
+get-orig-results = (node, selector, filter-arg) ->
   if has-filter filter-arg then
     ->
       [node]
