@@ -23,7 +23,7 @@ run <<<
     args = get-args engine, selector
     new Runner({ input, exit, opts, data: true }).run!
 
-  replace: (engine, selector, replacement, input) -->
+  replace: (engine, selector, replacement, input, opts) -->
     args = get-args engine, selector
     set-replace args, replacement
     new Runner({ args, input, exit, opts }).run!

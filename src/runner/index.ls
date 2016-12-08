@@ -65,11 +65,13 @@ class Runner implements Logger
 
   prepare-search ->
     @search = new Search {
-      @console,
-      @parsed,
+      @console
+      @parsed
+      @parser-options
       @callback
-      @call-callback,
+      @call-callback
       @options
+      @opts
     }
 
   parse-selector ->
