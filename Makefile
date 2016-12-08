@@ -14,6 +14,7 @@ package.json: package.json.ls
 	$(LSC) --compile package.json.ls
 
 lib:
+	rm -rf lib
 	mkdir -p lib/
 
 lib/%.js: src/%.ls lib

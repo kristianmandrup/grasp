@@ -45,15 +45,17 @@ suite 'lib functions' ->
       const code = '''class Hello {
       }'''
 
-      const replacer = grasp.replace 'squery', {find, replace }
-      const result = replacer.replace(code, [{
+      const actions = [{
         action: 'append',
         name: 'fn',
-        node: {
+        nodes: [{
           type: 'Raw',
           raw: 'hello () { }'
-        }
-      }])
+        }]
+      }]
+
+      const replacer = grasp.replace 'squery', {find, replace, actions }
+      const result = replacer.replace(code)
       const expected = """class Hello {
         hello () { }
       }"""
