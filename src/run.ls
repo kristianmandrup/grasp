@@ -19,13 +19,13 @@ exit = (, results) ->
 
 run <<<
   VERSION: version
-  search: (engine, selector, input) -->
+  search: (engine, selector, input, opts) -->
     args = get-args engine, selector
-    new Runner({ input, exit, data: true }).run!
+    new Runner({ input, exit, opts, data: true }).run!
 
   replace: (engine, selector, replacement, input) -->
     args = get-args engine, selector
     set-replace args, replacement
-    new Runner({ args, input, exit }).run!
+    new Runner({ args, input, exit, opts }).run!
 
 module.exports = run

@@ -2,8 +2,12 @@ version = require('../package.json').version
 
 { search-target, get-query-engine, get-display-filename } = require './utils'
 
-class Runner
+Logger = require '../logger'
+search = require '../search'
+
+class Runner implements Logger
   ({
+  @opts
   @args
   @error = -> throw new Error it
   @callback = ->
@@ -33,7 +37,7 @@ class Runner
     @handle-replace!
     @handle-selector!
 
-    options.display-filename = get-display-filename @options, @targets
+    @options.display-filename = get-display-filename @options, @targets
 
     @set-output-format!
     @prepare-search!
@@ -48,27 +52,36 @@ class Runner
     @set-test-exclude!
     @do-search!
 
+  search-input ->
+    return unless @input
+    @search '(input)', @input
+    @results-format = @search.results-format
+    @end ['-'] # as if stdin for replacement
+
+  search-targets ->
+    cwd = process.cwd!
+    async.each-series @targets, (search-target cwd, cwd), -> end @target-paths
+    void
+
   do-search ->
     @target-paths = []
-    if @input
-      @search '(input)', @input
-      @results-format = @search.results-format
-      end ['-'] # as if stdin for replacement
-    else
-      cwd = process.cwd!
-      async.each-series @targets, (search-target cwd, cwd), -> end @target-paths
-      void
+    @search-input! or @search-targets!
 
   prepare-search ->
-    @search = new Search {@parsed}
+    @search = new Search {
+      @console,
+      @parsed,
+      @callback
+      @call-callback,
+      @options
+    }
 
   parse-selector ->
     @parsed ?= {}
-    console.time 'parse-selector' if @debug
+    @time 'parse-selector'
     @parsed.selector = @query-engine.parse @selector
 
   set-test-ext ->
-    exts = @options.extensions
     @test-ext = if exts.length is 0 or exts.length is 1 and exts.0 is '.'
       -> true
     else
@@ -113,36 +126,50 @@ class Runner
       exit 2, help-string
       return
 
+  handle-replace-file ->
+    return unless @options.replace-file
+    try
+      @replacement = @fs.read-file-sync that, 'utf8' .replace /([\s\S]*)\n$/ '$1'
+    catch
+      @error "Error: No such file '#{@options.replace-file}'."
+      @exit 2
+      return
+
+  is-replace ->
+    @options.replace? or @options.replace-func
+
   handle-replace ->
-    if @options.replace? or @options.replace-func
+    if is-replace?
       @replacement = that
-    else if @options.replace-file
-      try
-        @replacement = @fs.read-file-sync that, 'utf8' .replace /([\s\S]*)\n$/ '$1'
-      catch
-        @error "Error: No such file '#{@options.replace-file}'."
-        @exit 2
-        return
+    else
+      @handle-replace-file!
+
+  selector-from-file ->
+    try
+      @selector = @fs.read-file-sync that, 'utf8'
+    catch
+      @error "Error: No such file '#{@options.file}'."
+      @exit 2
+      return
+    @targets = @positional
+
+  selector-from-pos ->
+    @selector = @positional.0
+    @targets = @positional[1 to]
+
 
   handle-file ->
     if @options.file?
-      try
-        @selector = @fs.read-file-sync that, 'utf8'
-      catch
-        @error "Error: No such file '#{@options.file}'."
-        @exit 2
-        return
-      @targets = @positional
+      @selector-from-file!
     else
-      @selector = @positional.0
-      @targets = @positional[1 to]
+      @selector-from-pos!
 
   handle-help ->
-    if @options.help
-      help-string = @get-help!
-      @callback help-string
-      @exit 0, help-string
-      return
+    return unless @options.help
+    help-string = @get-help!
+    @callback help-string
+    @exit 0, help-string
+    return
 
 
   get-help ->
@@ -152,6 +179,7 @@ class Runner
     try
       {_: positional, debug}:options = parse-options @args
       @options = options
+      @exts = @options.extensions
       @positional = positional or []
       @debug = debug
     catch
@@ -166,27 +194,25 @@ class Runner
       return
 
   handle-jsx ->
-    if @options.jsx
-      @options.extensions.push('jsx')
-      if @options.parser.0 == 'acorn'
-        require 'acorn-jsx'
-        @options.parser.1.plugins = {jsx: true}
+    return unless @options.jsx
+    @options.extensions.push('jsx')
+    if @options.parser.0 == 'acorn'
+      require 'acorn-jsx'
+      @options.parser.1.plugins = {jsx: true}
 
   handle-version ->
-    if @options.version
-      version-string = "grasp v#version"
-      @callback version-string
-      @exit 0, version-string
-      return
+    return unless @options.version
+    version-string = "grasp v#version"
+    @callback version-string
+    @exit 0, version-string
+    return
 
   start-debug ->
-    return if not @debug?
-    console.time 'everything'
-    console.log 'options:'
-    console.log options
+    @time 'everything'
+    @log 'options:'
+    @log options
 
   end-debug ->
-    return if not @debug?
-    console.time-end 'parse-selector'
-    console.log 'parsed-selector:'
-    console.log JSON.stringify parsed-selector, null, 2
+    @time-end 'parse-selector'
+    @log 'parsed-selector:'
+    @log JSON.stringify parsed-selector, null, 2

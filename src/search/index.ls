@@ -1,26 +1,15 @@
-Logger =
-  time(txt) ->
-    @console.time txt if @debug
-
-  time-end(txt) ->
-    @console.time-end txt if @debug
-
-  log(txt) ->
-    @console.log txt if @debug
-
-  error(txt) ->
-    @console.error txt
+Logger = require '../logger'
 
 module.exports = class Search implements Logger
   ({
-    @console, @call-callback, @options, @parsed
+    @console, @call-callback, @callback, @options, @parsed
   }) ->
     @results-data = []
     @results-format = 'default'
 
     @out = !->
       @results-data.push it
-      callback it if @call-callback
+      @callback it if @call-callback
 
   set-count ->
     @count = if @options.max-count? then min that, @results.length else @results.length
@@ -30,7 +19,7 @@ module.exports = class Search implements Logger
     @sliced-results = sorted-results[til count]
 
   handle-replacement ->
-    return if not @replacement?
+    return unless @replacement?
     try
       replaced = replace replacement, clean-input, sliced-results, query-engine
       if options.to or options.in-place
@@ -42,7 +31,7 @@ module.exports = class Search implements Logger
       @error "#name: Error during replacement. #{e.message}."
 
   handle-count ->
-    return if not @options.count
+    return unless @options.count
     if @options.display-filename
       if @options.json or data
         @results-format := 'pairs'
@@ -54,18 +43,22 @@ module.exports = class Search implements Logger
 
   # TODO: need txt format data, color etc.
   handle-file-matching ->
-    return if not (@options.files-without-match or @options.files-with-matches)
+    return unless (@options.files-without-match or @options.files-with-matches)
     if @options.files-with-matches and count or @options.files-without-match and not count
       @out if @options.json or data then name else format-name color, name
 
+  handle-pairs ->
+    return unless @options.display-filename
+    @results-format := 'pairs'
+    @out [@name, @sliced-results]
+
+  handle-lists ->
+    @results-format := 'lists'
+    @out @sliced-results
+
   handle-json-data ->
-    return if not (@options.json or data)
-    if @options.display-filename
-      @results-format := 'pairs'
-      @out [@name, @sliced-results]
-    else
-      @results-format := 'lists'
-      @out @sliced-results
+    return unless (@options.json or @data)
+    @handle-pairs! or @handle-lists!
 
   handle-input-data ->
       input-lines = lines @clean-input
