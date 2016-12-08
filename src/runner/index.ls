@@ -4,28 +4,17 @@ version = require('../package.json').version
 
 class Runner
   ({
-  args
-  error = -> throw new Error it
-  callback = ->
-  exit = ->
-  data = false
-  stdin
-  fs = require 'fs'
-  text-format = require 'cli-color'
-  input
-  console = _console
+  @args
+  @error = -> throw new Error it
+  @callback = ->
+  @exit = ->
+  @data = false
+  @stdin
+  @fs = require 'fs'
+  @text-format = require 'cli-color'
+  @input
+  @console = _console
   } = {}) ->
-    @args = args
-    @error = error
-    @callback = callback
-    @exit = exit
-    @data = data
-    @stdin = stdin
-    @fs = fs
-    @text-format = text-format
-    @input = input
-    @console = console
-
     @validate-args!
     @parse-args!
 
@@ -34,7 +23,8 @@ class Runner
     @handle-help!
     @handle-jsx!
 
-    @query-engine = get-query-engine options
+  run ->
+    @query-engine = get-query-engine @options
 
     @set-parser!
     @set-context!
@@ -70,11 +60,12 @@ class Runner
       void
 
   prepare-search ->
-    @search = new Search
+    @search = new Search {@parsed}
 
   parse-selector ->
+    @parsed ?= {}
     console.time 'parse-selector' if @debug
-    @parsed-selector = @query-engine.parse @selector
+    @parsed.selector = @query-engine.parse @selector
 
   set-test-ext ->
     exts = @options.extensions
@@ -84,7 +75,7 @@ class Runner
       (.match //\.(?:#{ exts.join '|' })$//)
 
   set-test-exclude ->
-    exclude = options.exclude
+    exclude = @options.exclude
     @test-exclude = if !exclude or exclude.length is 0
       -> true
     else
@@ -110,7 +101,6 @@ class Runner
     @options.context ?= @options.NUM ? 0
     @options.before-context ?= @options.context
     @options.after-context ?= @options.context
-
 
   handle-recursive ->
     @targets = (if options.recursive then ['.'] else ['-']) unless @targets.length
