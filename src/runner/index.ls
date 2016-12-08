@@ -21,15 +21,13 @@ class Runner implements Logger
   } = {}) ->
     @validate-args!
     @parse-args!
+    @extract-opts!
 
     @start-debug!
     @handle-version!
     @handle-help!
     @handle-jsx!
-
-  run ->
     @query-engine = get-query-engine @options
-
     @set-parser!
     @set-context!
     @handle-file!
@@ -42,12 +40,10 @@ class Runner implements Logger
     @set-output-format!
     @prepare-search!
 
-    call-callback = not options.quiet and not options.json and not options.to and not options.in-place
-
     @parse-selector!
     @end-debug!
 
-    # more...
+  run ->
     @set-test-ext!
     @set-test-exclude!
     @do-search!
@@ -87,16 +83,17 @@ class Runner implements Logger
     else
       (.match //\.(?:#{ exts.join '|' })$//)
 
+  exclude-fun ->
+    (file, basePath, upPath) ~>
+      filePath = path.relative basePath, path.join upPath, file
+      @exclude.every (excludePattern) ->
+        !minimatch filePath, excludePattern, @options.minimatchOptions
+
   set-test-exclude ->
-    exclude = @options.exclude
-    @test-exclude = if !exclude or exclude.length is 0
+    @test-exclude = if !@exclude or @exclude.length is 0
       -> true
     else
-      (file, basePath, upPath) ->
-        filePath = path.relative basePath, path.join upPath, file
-        exclude.every (excludePattern) ->
-          !minimatch filePath, excludePattern, options.minimatchOptions
-
+      @exclude-fun!
 
   set-output-format ->
     @color = Obj.map (-> if @options.color then it else (-> "#it")), @text-format{green, cyan, magenta, red}
@@ -157,7 +154,6 @@ class Runner implements Logger
     @selector = @positional.0
     @targets = @positional[1 to]
 
-
   handle-file ->
     if @options.file?
       @selector-from-file!
@@ -175,11 +171,15 @@ class Runner implements Logger
   get-help ->
     help generate-help, generate-help-for-option, @positional, {version}
 
+  extract-opts ->
+    @exts = @options.extensions
+    @exclude = @options.exclude
+    @call-callback = not @options.quiet and not @options.json and not @options.to and not @options.in-place
+
   parse-args ->
     try
       {_: positional, debug}:options = parse-options @args
       @options = options
-      @exts = @options.extensions
       @positional = positional or []
       @debug = debug
     catch
