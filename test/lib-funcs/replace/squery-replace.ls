@@ -46,9 +46,7 @@ suite 'lib functions' ->
       }'''
 
       const actions = [{
-        action: 'append',
-        name: 'fn',
-        nodes: [{
+        'append:fn': [{
           type: 'Raw',
           raw: 'hello () { }'
         }]

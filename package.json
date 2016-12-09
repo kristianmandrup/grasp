@@ -33,6 +33,7 @@
   },
   "scripts": {
     "test": "make test",
+    "dev": "lsc -wco lib src",
     "build": "make build"
   },
   "dependencies": {
