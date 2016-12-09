@@ -3,3 +3,4 @@ coverage
 t.*
 tt.*
 .idea
+*.log

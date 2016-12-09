@@ -31,6 +31,7 @@ repository:
 scripts:
   test: 'make test'
   build: 'make build'
+  dev: 'lsc -wco lib src'
 
 dependencies:
   acorn: '^2.6.4'

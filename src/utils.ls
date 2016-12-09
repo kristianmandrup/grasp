@@ -37,13 +37,13 @@ search-target = (base-path, up-path) ->
 
 get-query-engine = (options) ->
   if options.engine?
-      require options.engine
-    else if options.squery
-      squery
-    else if options.equery
-      equery
-    else
-      squery
+    require options.engine
+  else if options.squery
+    squery
+  else if options.equery
+    equery
+  else
+    squery
 
 get-display-filename = (options, targets) ->
   if options.filename?

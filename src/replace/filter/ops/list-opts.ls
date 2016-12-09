@@ -26,7 +26,7 @@ module.exports =
   append ->
     for arg in args then append @results, arg
   each ->
-    throw new Error "No arguments supplied for 'each #{args.0}'" if args.length < 2
+    throw new Error "No arguments supplied for 'each #{@args.0}'" if @args.length < 2
     do-each @args, @result
   nth ->
     n = +@args.0
@@ -39,11 +39,11 @@ module.exports =
   tail ->
     @results := @results.slice 1
   last ->
-    len = results.length
-    results := results.slice (len - 1), len
+    len = @results.length
+    @results := @results.slice (len - 1), len
   initial ->
-    results := results.slice 0, (results.length - 1)
+    @results := results.slice 0, (results.length - 1)
   slice ->
-    results := [].slice.apply results, args
+    @results := [].slice.apply results, args
   reverse ->
-    results.reverse!
+    @results.reverse!

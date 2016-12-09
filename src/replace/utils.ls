@@ -37,7 +37,9 @@ get-raw = (input, node) ->
   else
     ''
   node.raw = raw
-  "#{ node.raw-prepend or '' }#raw#{ node.raw-append or '' }"
+  prepend-str = node.raw-prepend or ''
+  append-str = node.raw-append or ''
+  "#{ prepend-str }#raw#{ append-str }"
 
 module.exports = {
   get-raw
