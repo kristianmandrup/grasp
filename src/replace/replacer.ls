@@ -1,3 +1,6 @@
+{ get-filters } = require './utils'
+{ get-orig-results } = require './orig-results'
+
 replacer = (input, node, query-engine) ->
   (, replacement-arg, filter-arg) ->
     filter-arg = filter-arg || replacement-arg

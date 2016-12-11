@@ -45,12 +45,12 @@ suite 'lib functions' ->
       const code = '''class Hello {
       }'''
 
-      const actions = [{
+      const actions = {
         'append:fn': [{
           type: 'Raw',
           raw: 'hello () { }'
         }]
-      }]
+      }
 
       const replacer = grasp.replace 'squery', {find, replace, actions }
       const result = replacer.replace(code)

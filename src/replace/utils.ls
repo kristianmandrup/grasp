@@ -23,9 +23,18 @@ parse-filters = (filter-str) ->
   else
     [selector, ...filters] = filter-str.split filter-regex
 
+# a Filter object
+# const actions = {
+#   'append:fn': [{
+#     type: 'Raw',
+#     raw: 'hello () { }'
+#   }]
+# }
+parse-filter-obj (filter-arg) ->
+  filter-arg
+
 get-filters =  (filter-arg) ->
-  filter-arg if Array.isArray filter-arg
-  parse-filters filter-arg
+   if typeof filter-arg === 'string' then parse-filters filter-arg else parse-filter-obj filter-arg
 
 get-raw = (input, node) ->
   raw = if node.raw

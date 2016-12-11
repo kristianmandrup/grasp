@@ -18,6 +18,4 @@ module.exports = class Filter implements TextOperations, ListOps
   wrap ->
     wrap raw, args
 
-
-
   [join, raw, results, text-operations]
