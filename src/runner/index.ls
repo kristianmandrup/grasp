@@ -119,10 +119,10 @@ class Runner implements Logger
 
   handle-selector ->
     unless @selector?
-      error 'Error: No selector specified.'
-      help-string = get-help!
-      callback help-string
-      exit 2, help-string
+      @error 'Error: No selector specified.'
+      @help-string = @get-help!
+      @callback @help-string
+      @exit 2, @help-string
       return
 
   handle-replace-file ->
@@ -170,7 +170,7 @@ class Runner implements Logger
     return
 
   get-help ->
-    help generate-help, generate-help-for-option, @positional, {version}
+    @help generate-help, generate-help-for-option, @positional, {version}
 
   extract-opts ->
     @exts = @options.extensions
