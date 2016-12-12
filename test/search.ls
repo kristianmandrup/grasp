@@ -19,18 +19,38 @@ suite 'search' ->
     suite 'replace-pairs' ->
 
     suite 'handle-replacement' ->
+      test 'has no replacement' ->
+        # returns void
+
+      test 'has replacement' ->
 
     suite 'handle-display-filename' ->
+      test 'has no display-filename' ->
+        # returns void
+
+      test 'has display-filename' ->
 
     suite 'count-data' ->
 
     suite 'handle-count' ->
+      test 'has no count' ->
+        # returns void
+
+      test 'has count' ->
 
     suite 'is-matching' ->
 
     suite 'handle-file-matching' ->
+      test 'has no count files-without-match or files-with-matches' ->
+        # returns void
+
+      test 'has count' ->
 
     suite 'handle-pairs' ->
+      test 'has no display-filename' ->
+        # returns void
+
+      test 'has display-filename' ->
 
     suite 'handle-lists' ->
 
