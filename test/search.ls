@@ -1,12 +1,21 @@
 {grasp} = require '../_helpers'
 {strict-equal: equal} = require 'assert'
 
+create-search = {console, call-callback, callback, options, parsed, parser-options, opts}
+  # TODO: fix arguments
+  new Search console, opts
+
+create-opts-search = (opts) ->
+  create-search {opts}
+
+create-default-search = ->
+  create-opts-search opts: {}
 
 suite 'search' ->
   suite 'class Search' ->
     suite 'create instance' ->
       test 'basic' ->
-
+        create-default-search!
       # ...
 
     suite 'set-count' ->
@@ -15,8 +24,22 @@ suite 'search' ->
       test 'has max-count' ->
 
     suite 'set-results' ->
+      test '@sorted' ->
+
+      test '@sliced' ->
 
     suite 'replace-pairs' ->
+      test 'options: none' ->
+        s = create-opts-search opts: {}
+        eq s.replace-pairs, false
+
+      test 'options: to' ->
+        s = create-opts-search opts: {to: 'x'}
+        eq s.replace-pairs, true
+
+      test 'options: in-place' ->
+        s = create-opts-search opts: {in-place: 'x'}
+        eq s.replace-pairs, true
 
     suite 'handle-replacement' ->
       test 'has no replacement' ->
