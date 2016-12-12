@@ -1,7 +1,7 @@
 {grasp} = require '../../_helpers'
 {strict-equal: equal} = require 'assert'
 
-suite 'lib functions' ->
+suite 'replace: squery basic' ->
   input = '''
           function square(x) {
             return x * x;

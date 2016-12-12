@@ -30,11 +30,11 @@ parse-filters = (filter-str) ->
 #     raw: 'hello () { }'
 #   }]
 # }
-parse-filter-obj (filter-arg) ->
+parse-filter-obj = (filter-arg, actions) ->
   filter-arg
 
-get-filters =  (filter-arg) ->
-   if typeof filter-arg === 'string' then parse-filters filter-arg else parse-filter-obj filter-arg
+get-filters =  (filter-arg, actions) ->
+   if typeof filter-arg === 'string' then parse-filters filter-arg else parse-filter-obj filter-arg, actions
 
 get-raw = (input, node) ->
   raw = if node.raw

@@ -1,4 +1,4 @@
-{eq, q, StdIn, FileSystem} = require './_helpers'
+{eq, q, StdIn, FileSystem} = require '../_helpers'
 {strict-equal: equal}:assert = require 'assert'
 
 suite 'lib options' ->

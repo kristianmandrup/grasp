@@ -33,6 +33,7 @@
   },
   "scripts": {
     "test": "make test",
+    "cover": "make coverage",
     "dev": "lsc -wco lib src",
     "build": "make build"
   },

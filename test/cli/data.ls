@@ -1,4 +1,4 @@
-{eq} = require './_helpers'
+{eq} = require '../_helpers'
 {strict-equal: equal, deep-equal}:assert = require 'assert'
 
 suite 'data' ->

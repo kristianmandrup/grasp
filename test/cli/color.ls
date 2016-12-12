@@ -1,4 +1,4 @@
-{eq} = require './_helpers'
+{eq} = require '../_helpers'
 clc = require 'cli-color'
 
 suite 'color' ->

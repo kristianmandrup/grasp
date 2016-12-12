@@ -1,4 +1,4 @@
-{eq} = require './_helpers'
+{eq} = require '../_helpers'
 
 suite 'exclude' ->
   base-dir = process.cwd!

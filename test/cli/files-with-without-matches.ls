@@ -1,4 +1,4 @@
-{eq} = require './_helpers'
+{eq} = require '../_helpers'
 
 suite 'files with/without matches' ->
   test 'single file - files-with-matches' ->

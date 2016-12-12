@@ -29,6 +29,10 @@ build: $(LIB) package.json
 test: build
 	$(MOCHA) --reporter dot --ui tdd --compilers ls:$(LS)
 
+test-cli: build
+	$(MOCHA) --reporter dot --ui tdd --compilers ls:$(LS)
+
+
 coverage: build
 	$(ISTANBUL) cover $(MOCHA2) -- --reporter dot --ui tdd --compilers ls:$(LS)
 

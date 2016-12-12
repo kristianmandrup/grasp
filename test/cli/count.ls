@@ -1,4 +1,4 @@
-{eq} = require './_helpers'
+{eq} = require '../_helpers'
 
 suite 'count' ->
   test 'single file - no filename' ->

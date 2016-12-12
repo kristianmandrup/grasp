@@ -1,4 +1,4 @@
-{eq} = require './_helpers'
+{eq} = require '../_helpers'
 
 suite 'line-number and col-number' ->
   test 'no line-number and no col-number' ->

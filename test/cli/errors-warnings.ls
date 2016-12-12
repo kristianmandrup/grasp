@@ -1,4 +1,4 @@
-{grasp, eq, q} = require './_helpers'
+{grasp, eq, q} = require '../_helpers'
 {throws} = require 'assert'
 
 suite 'errors and warnings' ->

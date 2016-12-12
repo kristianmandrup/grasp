@@ -169,7 +169,6 @@ class Runner implements Logger
     @exit 0, help-string
     return
 
-
   get-help ->
     help generate-help, generate-help-for-option, @positional, {version}
 
@@ -217,4 +216,4 @@ class Runner implements Logger
   end-debug ->
     @time-end 'parse-selector'
     @log 'parsed-selector:'
-    @log JSON.stringify parsed-selector, null, 2
+    @log JSON.stringify @parsed.selector, null, 2
