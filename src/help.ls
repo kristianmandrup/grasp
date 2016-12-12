@@ -89,8 +89,7 @@ generate-help-for-category = (name) ->
   #{ unlines names }
   """
 
-module.exports = (generate-help, generate-help-for-option, positional, interpolate) ->
-  if positional.length
+positional-help = ({generate-help, generate-help-for-option, positional, interpolate}) ->
     help-strings = for arg in positional
       if arg is 'advanced'
         generate-help {+show-hidden, interpolate}
@@ -123,5 +122,9 @@ module.exports = (generate-help, generate-help-for-option, positional, interpola
         else
           "No such help option: #arg."
     help-strings |> flatten |> join '\n\n'
+
+module.exports = (generate-help, generate-help-for-option, positional, interpolate) ->
+  if positional.length
+    positional-help {generate-help, generate-help-for-option, positional, interpolate}
   else
     generate-help {interpolate}
