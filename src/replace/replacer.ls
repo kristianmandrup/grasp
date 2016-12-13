@@ -1,5 +1,6 @@
-{ get-filters } = require './utils'
+{ extraxt } = require './replacement'
 { get-orig-results } = require './orig-results'
+{ get-args, get-raw } = require '.utils'
 
 process-filters = ({filters, actions, raw}) ->
   while filters.length
@@ -35,7 +36,7 @@ process-orig = (orig-results, filters, actions) ->
 replacer = (input, node, query-engine, actions) ->
   # optional filter and actions argument
   (, replacement-arg) ->
-    [selector, filters] = extract-replacement replacement-arg
+    [selector, filters] = extract replacement-arg, actions
 
     # TODO: clean up!
     orig-results = get-orig-results(query-engine, node, selector, filter-arg) replacement-arg

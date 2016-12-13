@@ -1,30 +1,9 @@
 levn = require 'levn'
 
-filter-regex = //
-               \s+\|\s+
-               ([-a-zA-Z]+)
-               ((?:\s+(?:'(?:\\'|[^'])*'|"(?:\\"|[^"])*"|[^\|\s]+))*)
-               //
-
 get-args = (filters) ->
   args-str = filters.shift!.trim!
   args-str += filters.shift! # extra
   levn.parse 'Array', args-str
-
-has-filter = (txt) ->
-  /^\s*\|\s+/.test txt
-
-# actions Object could potentially be used here
-parse-filters = (filter-str, actions) ->
-  filter-str = filter-str.trim!
-
-  if has-filter? filter-str
-    [, ...filters] = " #{ filter-str }".split filter-regex # prepend space so regex works
-  else
-    [selector, ...filters] = filter-str.split filter-regex
-
-extract-replacement =  (replacement, actions) ->
-  parse-filters replacement, actions
 
 get-raw = (input, node) ->
   raw = if node.raw
@@ -43,4 +22,4 @@ get-raw = (input, node) ->
 module.exports =
   get-raw
   get-args
-  extract-replacement
+
