@@ -1,6 +1,5 @@
 levn = require 'levn'
 
-
 filter-regex = //
                \s+\|\s+
                ([-a-zA-Z]+)
@@ -15,7 +14,8 @@ get-args = (filters) ->
 has-filter = (txt) ->
   /^\s*\|\s+/.test txt
 
-parse-filters = (filter-str) ->
+# actions Object could potentially be used here
+parse-filters = (filter-str, actions) ->
   filter-str = filter-str.trim!
 
   if has-filter? filter-str
@@ -23,18 +23,8 @@ parse-filters = (filter-str) ->
   else
     [selector, ...filters] = filter-str.split filter-regex
 
-# a Filter object
-# const actions = {
-#   'append:fn': [{
-#     type: 'Raw',
-#     raw: 'hello () { }'
-#   }]
-# }
-parse-filter-obj = (filter-arg, actions) ->
-  filter-arg
-
-get-filters =  (filter-arg, actions) ->
-   if typeof filter-arg === 'string' then parse-filters filter-arg else parse-filter-obj filter-arg, actions
+extract-replacement =  (replacement, actions) ->
+  parse-filters replacement, actions
 
 get-raw = (input, node) ->
   raw = if node.raw
@@ -50,8 +40,7 @@ get-raw = (input, node) ->
   append-str = node.raw-append or ''
   "#{ prepend-str }#raw#{ append-str }"
 
-module.exports = {
+module.exports =
   get-raw
-  get-filters
   get-args
-}
+  extract-replacement

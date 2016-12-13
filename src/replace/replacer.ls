@@ -1,11 +1,11 @@
 { get-filters } = require './utils'
 { get-orig-results } = require './orig-results'
 
-process-filters = ({filters, raw}) ->
+process-filters = ({filters, actions, raw}) ->
   while filters.length
     filter-name = filters.shift!
     args = get-args filters
-    filter filter-name, args, {raw, results, text-operations}
+    filter filter-name, args, {raw, results, text-operations, actions}
 
 make-output = (operations, output) ->
   if text-operations.length
@@ -16,7 +16,7 @@ make-output = (operations, output) ->
 get-output = ({raw, join}) ->
   output = "#raw.prepend#{ if join? then raw.results.join join else raw.results.0 }#raw.append"
 
-process-orig = (orig-results, filters) ->
+process-orig = (orig-results, filters, actions) ->
   # TODO: put in a record (Object)
   results = orig-results
   raw =
@@ -25,23 +25,23 @@ process-orig = (orig-results, filters) ->
 
   join = null
   text-operations = []
-  process-filters {results, filters, raw, text-operations}
+  process-filters {results, filters, raw, actions, text-operations}
 
   raw.results = [get-raw input, result for result in results]
 
   output = get-output {raw, join}
   make-output text-operations, output
 
-replacer = (input, node, query-engine) ->
-  (, replacement-arg, filter-arg) ->
-    filter-arg = filter-arg || replacement-arg
-    [selector, filters] = get-filters filter-arg
+replacer = (input, node, query-engine, actions) ->
+  # optional filter and actions argument
+  (, replacement-arg) ->
+    [selector, filters] = extract-replacement replacement-arg
 
     # TODO: clean up!
     orig-results = get-orig-results(query-engine, node, selector, filter-arg) replacement-arg
 
     if orig-results.length
-      process-orig orig-results, filters
+      process-orig orig-results, filters, actions
     else
       ''
 

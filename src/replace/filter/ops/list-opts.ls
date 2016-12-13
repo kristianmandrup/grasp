@@ -15,16 +15,26 @@ do-each = (args, result) ->
     throw new Error "'#{args.0}' is not supported by 'each'"
 
 append = (results, arg) ->
-  results.push type: 'Raw', raw: "#arg"
+  append-node results, type: 'Raw', raw: "#arg"
+
+append-node = (results, node) ->
+  results.push node
 
 prepend = (results, arg) ->
-  results.unshift type: 'Raw', raw: "#arg"
+  prepend-node results, type: 'Raw', raw: "#arg"
+
+prepend-node = (results, node) ->
+  results.unshift node
 
 module.exports =
-  prepend ->
+  prepend(node) ->
+    prepend-node @results, node if node
     for arg in args then prepend @results, arg
-  append ->
+
+  append(node) ->
+    append-node @results, node if node
     for arg in args then append @results, arg
+
   each ->
     throw new Error "No arguments supplied for 'each #{@args.0}'" if @args.length < 2
     do-each @args, @result

@@ -11,7 +11,6 @@ require! {
 {replace} = require './replace'
 {parse: parse-options,  generate-help, generate-help-for-option} = require './options'
 help = require './help'
-_console = console
 
 search = require './search'
 

@@ -1,18 +1,25 @@
 { lines, unlines, filter, fold, capitalize, camelize, dasherize} = require 'prelude-ls'
 
 Filter = require './clazz'
+validate = require './validate'
 
-filter = (name, args, {raw, results, text-operations}) ->
-  if not args.length and name in <[ prepend before after prepend append wrap nth nth-last
-                                            slice each replace substring substr str-slice ]>
-    throw new Error "No arguments supplied for '#filter-name' filter"
-  else if name in <[ replace ]> and args.length < 2
-    throw new Error "Must supply at least two arguments for '#filter-name' filter"
-
-  join = null
-  op-filter = new Filter({name, args, join, raw, results, text-operations})
+filter = (name, args, {raw, results, text-operations, actions}) ->
+  validate name, args
+  op-filter = new Filter({name, args, raw, results, text-operations, actions})
   try
-    return op-filter[name]
+    operation = name
+    node = null
+
+    # append:fn will look up entry append:fn in actions Objects to find node to append/prepend
+    if /:/.test(name)
+      parts = name.split ':'
+      operation = parts[0]
+      action = name
+      node = actions[action]
+
+    op-method = op-filter[operation]
+
+    return op-method(node)
   catch
     args-str = if args then args else ''
     throw new Error "Invalid filter: #name#{args-str}"

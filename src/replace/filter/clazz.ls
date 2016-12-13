@@ -6,7 +6,7 @@ wrap = (raw, args) ->
   raw.append += "#post"
 
 module.exports = class Filter implements TextOperations, ListOps
-  ({@name, @args, @raw, @results, @text-operations}) ->
+  ({@name, @args, @raw, @results, @text-operations, @actions}) ->
     this.head = this.first.bind(this)
 
   join ->
