@@ -18,6 +18,7 @@ _tf = require 'cli-color'
 class Runner implements Logger, Handlers, Setters, Debug, Args, Selector, Search
   ({
   @opts
+  @actions
   @args
   @error = -> throw new Error it
   @callback = ->

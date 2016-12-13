@@ -40,7 +40,39 @@ When debugging or refactoring, you can limit which tests to run, see [CLI usage]
 
 `npm run cover` (see `coverage` entry in `Makefile`)
 
-## Replacements
+## API
+
+### Replace
+
+```ls
+const engine = 'squery'
+
+const actions =
+  type: 'Raw'
+  raw: 'hello'
+
+const opts =
+  actions
+
+const code = 'class Hello {}'
+const selector = 'class[key=#Hello] body[type=#ClassBody]'
+const replacement = '{{ .body | append:fn }}'
+
+# (engine, selector, replacement, input, opts)
+grasp.replace engine, selector, replacement, code, opts
+```
+
+### Search
+
+```ls
+const selector = 'class[key=#Hello] body[type=#ClassBody]'
+const code = 'class Hello {}'
+
+# (engine, selector, input, opts)
+grasp.search 'squery', selector, code
+```
+
+## API Architecture
 
 `run.ls` exports a run object with `search` and `replace` that is also exported in `index.ls`
 
@@ -48,17 +80,37 @@ When debugging or refactoring, you can limit which tests to run, see [CLI usage]
 run <<<
   VERSION: version
   search: (engine, selector, input, opts) -->
+    if typeof selector is 'object'
+      { selector, code, opts } = selector
+      selector ?= selector.find or selector.query or selector.select
+      input ?= selector.code
+
     args = get-args engine, selector
-    new Runner({ input, exit, opts, data: true }).run!
+    new Runner({ input, exit, opts, actions, data: true }).run!
 
   # actions are passed via opts object
   replace: (engine, selector, replacement, input, opts) -->
+    actions = null
+    if typeof selector is 'object'
+      { selector, replacement, input, actions, opts } = selector
+      selector ?= selector.find or selector.query or selector.select
+      input ?= selector.code
+      replacement ?= selector.replace
+
     args = get-args engine, selector
     set-replace args, replacement
     new Runner({ args, input, exit, opts }).run!
 ```
 
 The `opts` object can be used to send additional argument and is currently used to pass filter `actions` used by replacement.
+
+You can call the core APIs either via numbered:
+
+`grasp.replace(engine, selector, replacement, input, opts)`
+
+or named arguments:
+
+`grasp.replace('squery', {select, replace, input, actions})`
 
 ## Replacements
 
