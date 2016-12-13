@@ -49,7 +49,7 @@ suite 'replace: squery' ->
     }"""
 
     test 'with replace function' ->
-      equal (grasp.replace 'squery' find, (get-raw, node, query) ->
+      equal (grasp.replace 'squery', findBody, (get-raw, node, query) ->
         # TODO: append to body Array node instead!!
 
         """{
@@ -73,7 +73,7 @@ suite 'replace: squery' ->
         }]
       }
 
-      const replacer = grasp.replace 'squery', {find, replace, actions }
+      const replacer = grasp.replace 'squery', {find: findBody, replace, actions }
       const result = replacer.replace(code)
 
       equal (result, expected)
