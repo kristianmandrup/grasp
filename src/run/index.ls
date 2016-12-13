@@ -1,23 +1,11 @@
 Runner = require './runner'
 
-get-query-engine = -> {squery: 'grasp-squery', equery: 'grasp-equery'}[it] or it
+{ exit, get-args, set-replace } = require './utils'
 
-get-args = (engine, selector) ->
-  {_: [selector], engine: get-query-engine engine}
+create-runner = ({ args, input, exit, actions, opts }) ->
+  new Runner { args, input, exit, actions, opts } .run!
 
-is-fun = (fun) ->
-  typeof! replacement is 'Function'
-
-set-replace = (args, replacement) ->
-  if is-fun? replacement
-    args.replace-func = replacement
-  else
-    args.replace = replacement
-
-exit = (, results) ->
-  results.0
-
-run <<<
+module.exports =
   VERSION: version
   search: (engine, selector, input, opts) -->
     if typeof selector is 'object'
@@ -26,7 +14,7 @@ run <<<
       input ?= selector.code
 
     args = get-args engine, selector
-    new Runner({ input, exit, opts, actions, data: true }).run!
+    create-runner { input, exit, opts, actions, data: true } .run!
 
   # actions are passed via opts object
   replace: (engine, selector, replacement, input, opts) -->
@@ -39,6 +27,5 @@ run <<<
 
     args = get-args engine, selector
     set-replace args, replacement
-    new Runner({ args, input, exit, actions, opts }).run!
+    create-runner { args, input, exit, actions, opts } .run!
 
-module.exports = run
