@@ -35,6 +35,7 @@
     "test": "make test",
     "cover": "make coverage",
     "dev": "lsc -wco lib src",
+    "build-src": "lsc -co lib src",
     "build": "make build"
   },
   "dependencies": {
