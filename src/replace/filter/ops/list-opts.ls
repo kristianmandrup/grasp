@@ -29,11 +29,11 @@ prepend-node = (results, node) ->
 module.exports =
   prepend(node) ->
     prepend-node @results, node if node
-    for arg in args then prepend @results, arg
+    for arg in @args then prepend @results, arg
 
   append(node) ->
     append-node @results, node if node
-    for arg in args then append @results, arg
+    for arg in @args then append @results, arg
 
   each ->
     throw new Error "No arguments supplied for 'each #{@args.0}'" if @args.length < 2

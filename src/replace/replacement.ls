@@ -32,9 +32,11 @@ use-replacement-func = (replacement, input, query-engine) ->
 create-replacement-func = (replacement, input, query-engine, actions) ->
   replacement-prime = replacement.replace /\\n/g, '\n'
   (node) ->
+    replace-fun = replacer input, node, query-engine, actions
+
     replacement-prime
     .replace /{{}}/g, -> get-raw input, node # func b/c don't want to call get-raw unless we need to
-    .replace /{{((?:[^}]|}[^}])+)}}/g, replacer input, node, query-engine, actions
+    .replace /{{((?:[^}]|}[^}])+)}}/g, replace-fun
 
 is-fun = (fun) ->
   typeof! fun is 'Function'

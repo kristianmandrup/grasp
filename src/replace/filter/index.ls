@@ -8,18 +8,16 @@ filter = (name, args, {raw, results, text-operations, actions}) ->
   op-filter = new Filter({name, args, raw, results, text-operations, actions})
   try
     operation = name
-    node = null
-
-    # append:fn will look up entry append:fn in actions Objects to find node to append/prepend
-    if /:/.test(name)
+    op-arg = null
+    # append:fn will look up entries append:fn and fn in actions Objects
+    if /:/.test name
       parts = name.split ':'
       operation = parts[0]
-      action = name
-      node = actions[action]
+      op-name = parts[1]
+      op-arg = actions[name] or actions[op-name]
 
     op-method = op-filter[operation]
-
-    return op-method(node)
+    op-method(op-arg)
   catch
     args-str = if args then args else ''
     throw new Error "Invalid filter: #name#{args-str}"

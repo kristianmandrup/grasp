@@ -5,8 +5,8 @@
 { ReplaceNode } = './replace-node'
 
 # replace replacement, clean-input, sliced-results, query-engine
-replace = (replacement, input, nodes, query-engine) ->
-  replace-node = new ReplaceNode replacement, input, nodes, query-engine
+replace = (replacement, input, nodes, query-engine, actions) ->
+  replace-node = new ReplaceNode replacement, input, nodes, query-engine, actions
   replace-node.iterate!
   unlines replace-node.input-lines
 

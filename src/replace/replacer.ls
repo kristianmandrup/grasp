@@ -2,7 +2,7 @@
 { get-orig-results } = require './orig-results'
 { get-args, get-raw } = require '.utils'
 
-process-filters = ({filters, actions, raw}) ->
+process-filters = ({results, text-operations, filters, actions, raw}) ->
   while filters.length
     filter-name = filters.shift!
     args = get-args filters
