@@ -51,15 +51,12 @@ const actions =
   type: 'Raw'
   raw: 'hello'
 
-const opts =
-  actions
-
 const code = 'class Hello {}'
-const selector = 'class[key=#Hello] body[type=#ClassBody]'
-const replacement = '{{ .body | append:fn }}'
+const select = 'class[key=#Hello] body[type=#ClassBody]'
+const replace = '{{ .body | append:fn }}'
 
 # (engine, selector, replacement, input, opts)
-grasp.replace engine, selector, replacement, code, opts
+grasp.replace engine, { select, replace, code, actions}
 ```
 
 ### Search
@@ -69,7 +66,7 @@ const selector = 'class[key=#Hello] body[type=#ClassBody]'
 const code = 'class Hello {}'
 
 # (engine, selector, input, opts)
-grasp.search 'squery', selector, code
+grasp.search 'squery', { selector, code}
 ```
 
 ## API Architecture
