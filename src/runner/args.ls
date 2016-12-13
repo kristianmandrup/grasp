@@ -3,6 +3,7 @@ module.exports =
     try
       {_: positional, debug}:options = parse-options @args
       @options = options
+      @actions = @opts.actions # used for replace
       @positional = positional or []
       @debug = debug
     catch

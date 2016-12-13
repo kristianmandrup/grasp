@@ -22,5 +22,6 @@ module.exports =
       @callback
       @call-callback
       @options
+      @actions
       @opts
     }

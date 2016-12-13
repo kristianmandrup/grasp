@@ -23,6 +23,7 @@ run <<<
     args = get-args engine, selector
     new Runner({ input, exit, opts, data: true }).run!
 
+  # actions are passed via opts object
   replace: (engine, selector, replacement, input, opts) -->
     args = get-args engine, selector
     set-replace args, replacement

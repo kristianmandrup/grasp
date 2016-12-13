@@ -1,3 +1,5 @@
+replace = require '../replace'
+
 module.exports =
   handle-count ->
     return unless @options.count
@@ -6,7 +8,8 @@ module.exports =
   handle-replacement ->
     return unless @replacement?
     try
-      replaced = replace @replacement, @clean-input, @search-results.sliced, @query-engine
+      # added actions :)
+      replaced = replace @replacement, @clean-input, @search-results.sliced, @query-engine, @actions
       if @replace-pairs?
         @@search-results.format := 'pairs'
         @out [name, replaced]

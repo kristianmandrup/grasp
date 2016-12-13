@@ -1,10 +1,10 @@
 { get-replacement-func } = require './replacement'
 { lines } = require 'prelude-ls'
 
-# TODO
-replace-node = (node) ->
+create-replace-nodes = (replacement, input, nodes, query-engine, actions) ->
+  new ReplaceNodes replacement, input, nodes, query-engine, actions
 
-module.exports = class ReplaceNode
+class ReplaceNode
   ({@nodes, @input, @replacement, @query-engine, actions}) ->
     @input-lines = lines @input
     @col-offset = 0
@@ -16,7 +16,7 @@ module.exports = class ReplaceNode
   iterate ->
     for node in @nodes
       continue if node.start < prev-node.end
-      @process(node)
+      @process node
 
   # TODO: optimize, improve, simplify
   process(node) ->
@@ -32,7 +32,7 @@ module.exports = class ReplaceNode
     @end-col = end.column + if @start-line-num is @end-line-num then @col-offset else 0
 
     # TODO: is this recursion correct?
-    @replace-lines = lines @process node
+    @replace-lines = lines @replace-node node
 
     @start-line = @input-lines[@start-line-num]
     @end-line = @input-lines[@end-line-num]
@@ -51,3 +51,7 @@ module.exports = class ReplaceNode
     @col-offset += @end-len - @end-col
     @last-line := @end-line-num + @line-offset
     @prev-node := node
+
+  module.exports =
+    create-replace-nodes
+    ReplaceNode

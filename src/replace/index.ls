@@ -2,12 +2,12 @@
 { get-orig-results } = require './orig-results'
 { replacer } = require './replacer'
 { unlines, lines } = require 'prelude-ls'
-{ ReplaceNode } = './replace-node'
+{ create-replace-nodes } = './replace-nodes'
 
 # replace replacement, clean-input, sliced-results, query-engine
 replace = (replacement, input, nodes, query-engine, actions) ->
-  replace-node = new ReplaceNode replacement, input, nodes, query-engine, actions
-  replace-node.iterate!
-  unlines replace-node.input-lines
+  replace-nodes = create-replace-nodes replacement, input, nodes, query-engine, actions
+  replace-nodes.iterate!
+  unlines replace-nodes.input-lines
 
-module.exports = { replace }
+module.exports = replace

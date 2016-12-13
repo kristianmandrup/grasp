@@ -42,8 +42,67 @@ When debugging or refactoring, you can limit which tests to run, see [CLI usage]
 
 ## Replacements
 
-The key to replacement functionality can be found in `replace/replacement.ls`
-Here we test if the `replacement` argument is a function. If so we use it as is, otherwise we create it via `create-replacement-func`.
+`run.ls` exports a run object with `search` and `replace` that is also exported in `index.ls`
+
+```ls
+run <<<
+  VERSION: version
+  search: (engine, selector, input, opts) -->
+    args = get-args engine, selector
+    new Runner({ input, exit, opts, data: true }).run!
+
+  # actions are passed via opts object
+  replace: (engine, selector, replacement, input, opts) -->
+    args = get-args engine, selector
+    set-replace args, replacement
+    new Runner({ args, input, exit, opts }).run!
+```
+
+The `opts` object can be used to send additional argument and is currently used to pass filter `actions` used by replacement.
+
+## Replacements
+
+`search/handlers.ls` handles replace via `handle-replacement`. Here, `replace` is a function that returns the replaced code.
+
+```ls
+  handle-replacement ->
+    return unless @replacement?
+    try
+      # added actions :)
+      replaced = replace @replacement, @clean-input, @search-results.sliced, @query-engine, @actions
+```
+
+The `replace` function is exported from `replace/index.ls` and uses:
+-  a `query-engine` (such as equery or squery)
+-  a `replacement` string (such as `{{.body | append:fn }})` or `{{ }} + 1`
+- optional `actions` object used by replacement filters (see below).
+- ...
+
+```ls
+replace = (replacement, input, nodes, query-engine, actions) ->
+  replace-nodes = create-replace-nodes replacement, input, nodes, query-engine, actions
+  replace-nodes.iterate!
+  unlines replace-nodes.input-lines
+```
+
+In `ReplaceNodes` class we create and set the `@replace-node` function in the constructor via `get-replacement-func` from `replace/replacement.ls`
+
+```ls
+    @replace-node = get-replacement-func @replacement, @input, @query-engine, actions
+```
+
+The `iterate` method iterates each node matched by the query and performs a replace via `@process`.
+
+```ls
+  iterate ->
+    for node in @nodes
+      continue if node.start < prev-node.end
+      @process node
+```
+
+
+The `get-replacement-func` creates the replacement function used to replace the code for each node matched.
+If the `replacement` argument is a function we use it as is, otherwise we create it via `create-replacement-func`.
 
 ```ls
 get-replacement-func = (replacement, input, query-engine, actions) ->

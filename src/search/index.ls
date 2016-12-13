@@ -11,6 +11,7 @@ module.exports = class Search implements Logger, Handlers, Setters
     @parsed
     @parser-options
     @results = []
+    @actions
     @opts
   }) ->
     @search-results = {}

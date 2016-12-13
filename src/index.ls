@@ -13,9 +13,11 @@ require! {
 help = require './help'
 
 search = require './search'
+run = require './run'
+
+module.exports = run
 
 { search-target, get-query-engine, get-display-filename } = require './utils'
-
 
 results-sort-func = (a, b) ->
   a-start = a.loc.start
