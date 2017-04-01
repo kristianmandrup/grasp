@@ -1,5 +1,7 @@
 # grasp
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kristianmandrup/grasp.svg)](https://greenkeeper.io/)
+
 JavaScript structural search, replace, and refactor.
 
 [Demo](http://graspjs.com#demo), [documentation](http://graspjs.com/docs/), and more: [graspjs.com](http://graspjs.com).
